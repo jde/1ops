@@ -18,3 +18,6 @@ next-env.d.ts
 *.local.yaml
 
 .DS_Store
+
+# 1ops captured logs (local runtime state)
+.1ops/

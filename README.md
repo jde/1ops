@@ -74,6 +74,25 @@ sure `.ops/*.local.yaml` is gitignored, and symlinks it into your playbooks dir.
 
 Do it for all twelve apps and your dashboard fills itself in.
 
+## The CLI — your dev keyring, and an agent's too
+
+1ops ships a CLI built to be driven by **both you and a coding agent** (so the
+agent can log in and read your errors instead of you copy-pasting them):
+
+```sh
+1ops list                              # every app it knows about
+1ops creds acme-web                    # dev logins — REDACTED by default
+1ops creds acme-web --reveal           # show dev passwords
+1ops creds acme-web --json             # structured, for an agent to drive with
+1ops creds acme-web --env prod --json  # POINTER ONLY — 1ops never holds prod creds
+1ops run  acme-web                     # run its start cmd, capturing logs
+1ops logs acme-web --errors --since 5m --json   # you OR the agent read live errors
+```
+
+The bright line, enforced in code: **dev creds are public (seeded, localhost-only)
+and an agent may use them; staging/prod return only a 1Password item name an agent
+cannot dereference.** Passwords are redacted unless you ask with `--reveal`/`--json`.
+
 ## Security promise
 
 - Playbooks store **pointers, never secrets**.

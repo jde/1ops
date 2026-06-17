@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Thin launcher so `1ops` works whether linked globally or run from the repo.
+exec npx --no-install tsx "$(dirname "$0")/cli.ts" "$@"

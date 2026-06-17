@@ -27,6 +27,10 @@ envs:
     accounts:
       source: seed
       seedFile: ../seeds/acme-web.seed.ts # dev logins live in committed code
+      users: # mirrored from the seed (public) so agents can drive the app
+        - { email: admin@acme.test, password: password123, role: admin }
+        - { email: member@acme.test, password: password123, role: member }
+        - { email: readonly@acme.test, password: password123, role: viewer }
     gotchas:
       - run `docker compose up db` first or auth throws a 500
       - port is set by PORT in .env, defaults to 3000

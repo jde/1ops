@@ -24,7 +24,14 @@ or a token value, stop: write the *source* instead (a seed file path or a
    - dev `accounts`: find the seed file (`prisma/seed.ts`, `seed.*`, `db/seed*`,
      a `db:seed` script). If found → `source: seed`, `seedFile: <relative path>`.
      If the app has no auth in dev → `source: inline-nonsecret` with a short note.
-     **Never copy credential values out of the seed file** — just point at it.
+   - dev `accounts.users`: **mirror the seeded logins** (email/username, password,
+     role) into a structured `users:` list. This is safe — seeded dev users only
+     work on localhost and already live in committed code — and it is what lets an
+     **agent drive the app** (log in, hit authed routes) without a human pasting
+     creds. Keep it in sync with the seed file on every regeneration.
+   - **dev only.** NEVER mirror staging/prod credentials. Those stay `source: vault`
+     with a `vaultItem` name only. The line is bright: dev creds are public and
+     agent-drivable; everything else is a pointer an agent cannot dereference.
 
 3. **Detect staging & prod** (best effort, then ask):
    - Look for URLs in `README`, `vercel.json`, CI config, `.env.example` comments.

@@ -143,15 +143,33 @@ async function Accounts({ env, pb }: { env: EnvSpec; pb: Playbook }) {
   if (acct.source === "inline-nonsecret") {
     return <div className="row">👤 {acct.note}</div>;
   }
-  // seed: read it live
-  const seed = await readSeed(pb, acct.seedFile);
-  if (!seed.ok) {
-    return <div className="row">🌱 seed: {seed.error}</div>;
-  }
+  // seed: show structured users (agent-readable) + the live seed file underneath.
+  const seed = acct.seedFile ? await readSeed(pb, acct.seedFile) : null;
   return (
-    <details className="seed">
-      <summary>🌱 dev logins (live from {acct.seedFile})</summary>
-      <pre>{seed.content.trim()}</pre>
-    </details>
+    <div>
+      {acct.users && acct.users.length > 0 && (
+        <table className="users">
+          <tbody>
+            {acct.users.map((u, i) => (
+              <tr key={i}>
+                <td>{u.email ?? u.username}</td>
+                <td>
+                  <code>{u.password ?? u.note ?? "—"}</code>
+                </td>
+                <td className="role">{u.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {seed && seed.ok && (
+        <details className="seed">
+          <summary>🌱 source of truth: {acct.seedFile}</summary>
+          <pre>{seed.content.trim()}</pre>
+        </details>
+      )}
+      {seed && !seed.ok && <div className="row">🌱 seed: {seed.error}</div>}
+      {!acct.users && !seed && <div className="row">🌱 seed (no users mirrored)</div>}
+    </div>
   );
 }

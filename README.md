@@ -53,8 +53,11 @@ files, on your machine, rendered.
 
 ```sh
 pnpm install
-pnpm dev          # http://localhost:3000 — boots with fake EXAMPLE data
+pnpm dev          # http://localhost:1134 — boots with fake EXAMPLE data
 ```
+
+> Why port 1134? Flip it upside down on a calculator. `1134` → **hELL**. A
+> dashboard that tames dev chaos belongs on port HELL.
 
 Point it at your real apps:
 

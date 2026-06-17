@@ -6,9 +6,9 @@
   "description": "1Password's chaotic dev cousin. One place for every app's dev/staging/prod URLs and where the creds live — without ever storing a secret.",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 1134",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 1134",
     "lint": "next lint"
   },
   "dependencies": {

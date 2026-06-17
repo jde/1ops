@@ -10,8 +10,22 @@
  * in a playbook. `assertNoSecrets()` below is the tripwire that enforces this.
  */
 
+/**
+ * A dev login an AGENT can drive with. Safe to publish: seeded dev users only
+ * work on localhost and already live in committed code. Mirror them here (the
+ * generate-playbook skill does this from the seed file) so agents get a
+ * reliable, structured handle instead of parsing seed code at runtime.
+ */
+export interface DevUser {
+  email?: string;
+  username?: string;
+  password?: string;
+  role?: string;
+  note?: string;
+}
+
 export type AccountSource =
-  | { source: "seed"; seedFile: string } //  dev: read live from committed code
+  | { source: "seed"; seedFile?: string; users?: DevUser[] } // dev: from committed code; mirror users for agents
   | { source: "vault"; vaultItem: string } //  stg/prod: a 1Password item NAME, not its contents
   | { source: "inline-nonsecret"; note: string }; // e.g. "anyone@example.com / no password in dev"
 

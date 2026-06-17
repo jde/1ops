@@ -85,6 +85,8 @@ agent can log in and read your errors instead of you copy-pasting them):
 1ops creds acme-web --reveal           # show dev passwords
 1ops creds acme-web --json             # structured, for an agent to drive with
 1ops creds acme-web --env prod --json  # POINTER ONLY — 1ops never holds prod creds
+1ops env  acme-web                     # preview .env from declared deps (dry run)
+1ops env  acme-web --write             # write missing dep keys — never clobbers yours
 1ops run  acme-web                     # run its start cmd, capturing logs
 1ops logs acme-web --errors --since 5m --json   # you OR the agent read live errors
 ```

@@ -163,6 +163,37 @@ header.top .tag {
   color: var(--muted);
 }
 
+.deps {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.deps-title {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.dep {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+  font-size: 12px;
+}
+.dep-port {
+  color: var(--muted);
+}
+.dep-seed {
+  font-size: 11px;
+}
+
 .envs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

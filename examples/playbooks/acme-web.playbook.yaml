@@ -19,6 +19,34 @@ commands:
     run: pnpm db:reset && pnpm db:seed
     cwd: packages/db
 
+# Local dev dependencies 1ops stands up and wires into .env.
+# Connection strings here are LOCAL + PUBLIC (localhost, default local creds).
+dependencies:
+  - name: db
+    kind: postgres
+    version: "16"
+    port: 5432
+    seed: true
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:{port}/acme_dev
+  - name: cache
+    kind: redis
+    port: 6379
+    env:
+      REDIS_URL: redis://localhost:{port}
+  - name: queue
+    kind: rabbitmq
+    port: 5672
+    env:
+      AMQP_URL: amqp://guest:guest@localhost:{port}
+  - name: storage
+    kind: minio
+    port: 9000
+    env:
+      S3_ENDPOINT: http://localhost:{port}
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+
 envs:
   dev:
     url: http://localhost:3000

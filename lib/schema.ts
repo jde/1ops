@@ -52,6 +52,23 @@ export interface Integration {
   note?: string; // e.g. "test mode keys in .env.example"
 }
 
+/**
+ * A dev-environment dependency 1ops can stand up locally (db, cache, queue,
+ * object storage…). The `env` map is the magic: the connection strings this
+ * dep populates in your `.env`. These are LOCAL and PUBLIC (localhost, default
+ * local passwords) — safe to generate, just like seeded users.
+ */
+export interface Dependency {
+  name: string; // "db", "cache", "queue", "storage"
+  kind: string; // "postgres" | "mysql" | "redis" | "rabbitmq" | "minio" | …
+  version?: string; // image tag, e.g. "16"
+  port?: number; // host port; substituted for {port} in env values
+  /** Env vars this dependency populates. `{port}` is replaced with `port`. */
+  env?: Record<string, string>;
+  /** True if this dep needs the app's seed step after it comes up. */
+  seed?: boolean;
+}
+
 export interface Playbook {
   app: string;
   description?: string;
@@ -62,6 +79,8 @@ export interface Playbook {
   packageManager?: "npm" | "pnpm" | "yarn" | "bun";
   /** Key commands and where to run them. The monorepo lifesaver. */
   commands?: Command[];
+  /** Local dev dependencies 1ops can stand up + wire into .env. */
+  dependencies?: Dependency[];
   envs: Partial<Record<"dev" | "staging" | "prod", EnvSpec>>;
   /** Third-party services/accounts (Stripe, Sentry, …) — names & dashboards, never keys. */
   integrations?: Integration[];

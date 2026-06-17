@@ -10,9 +10,11 @@
  *                   [--since 5m] [--follow] [--json] [--lines N]
  */
 import { spawn } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync, copyFileSync } from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import { loadPlaybooks } from "../lib/playbooks";
+import { planEnv, renderEnvBlock } from "../lib/env";
 import type { Playbook } from "../lib/schema";
 import {
   appendLogSync,
@@ -75,6 +77,7 @@ const HELP = `1ops — your dev keyring + agent collaboration kit
 
   1ops list
   1ops creds <app> [--env dev] [--reveal|--json]
+  1ops env   <app> [--write] [--json]
   1ops run   <app> [--env dev]
   1ops logs  <app> [--errors] [--since 5m] [--follow] [--json] [--lines N]
 `;
@@ -122,6 +125,39 @@ async function cmdCreds(name: string, flags: Flags) {
 
 function out(o: unknown) {
   console.log(JSON.stringify(o, null, 2));
+}
+
+async function cmdEnv(name: string, flags: Flags) {
+  const pb = await findApp(name);
+  const root = repoRoot(pb);
+  const envPath = path.join(root, ".env");
+  const examplePath = path.join(root, ".env.example");
+  const existing = existsSync(envPath) ? readFileSync(envPath, "utf8") : "";
+  const example = existsSync(examplePath) ? readFileSync(examplePath, "utf8") : "";
+
+  const plan = planEnv(pb, existing, example);
+  if (flags.json) return out(plan);
+
+  console.log(`.env plan for ${name}  (${envPath})`);
+  if (!plan.managed.length) console.log("  (no dependencies declared)");
+  for (const m of plan.managed) {
+    const tag = m.status === "new" ? "＋ new " : "= kept";
+    console.log(`  ${tag} ${m.key.padEnd(16)} ${m.value}   ← ${m.from}`);
+  }
+  if (plan.needsValue.length) {
+    console.log(`\n  needs a value (1ops won't invent these — fill from .env.example / 1Password):`);
+    for (const k of plan.needsValue) console.log(`    • ${k}`);
+  }
+
+  if (flags.write) {
+    const block = renderEnvBlock(plan);
+    if (!block) return console.log(`\n✓ nothing to add — .env already has every managed key.`);
+    if (existing) copyFileSync(envPath, envPath + ".bak");
+    writeFileSync(envPath, existing + block, "utf8");
+    console.log(`\n✓ wrote ${plan.managed.filter((m) => m.status === "new").length} key(s)${existing ? " (backed up .env → .env.bak)" : ""}.`);
+  } else {
+    console.log(`\n(dry run — re-run with --write to apply, merge-safe)`);
+  }
 }
 
 async function cmdRun(name: string, flags: Flags) {
@@ -186,6 +222,8 @@ async function main() {
       return cmdList();
     case "creds":
       return cmdCreds(positional[0] ?? die("usage: 1ops creds <app>"), flags);
+    case "env":
+      return cmdEnv(positional[0] ?? die("usage: 1ops env <app> [--write]"), flags);
     case "run":
       return cmdRun(positional[0] ?? die("usage: 1ops run <app>"), flags);
     case "logs":

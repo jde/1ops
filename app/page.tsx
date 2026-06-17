@@ -70,6 +70,20 @@ async function AppCard({ pb }: { pb: Playbook }) {
         </div>
       )}
 
+      {pb.dependencies && pb.dependencies.length > 0 && (
+        <div className="deps">
+          <span className="deps-title">deps</span>
+          {pb.dependencies.map((d, i) => (
+            <span className="dep" key={i}>
+              {d.kind}
+              {d.version ? ` ${d.version}` : ""}
+              {d.port ? <span className="dep-port">:{d.port}</span> : null}
+              {d.seed ? <span className="dep-seed">🌱</span> : null}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="envs">
         {ENV_ORDER.filter((name) => pb.envs[name]).map((name) => (
           <EnvCell key={name} name={name} env={pb.envs[name]!} pb={pb} />

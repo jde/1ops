@@ -1,0 +1,54 @@
+# Example playbook — totally fake, safe to publish. This is what the
+# `generate-playbook` skill writes into each of your real repos at /.ops/playbook.yaml
+app: acme-web
+description: Marketing site + customer dashboard (Turborepo monorepo)
+repo: https://github.com/acme/web
+packageManager: pnpm
+
+# Key commands and WHICH FOLDER to run them in — the monorepo lifesaver.
+commands:
+  - label: install
+    run: pnpm install
+  - label: dev (web)
+    run: pnpm dev
+    cwd: apps/web
+  - label: dev (admin)
+    run: pnpm dev
+    cwd: apps/admin
+  - label: db reset + seed
+    run: pnpm db:reset && pnpm db:seed
+    cwd: packages/db
+
+envs:
+  dev:
+    url: http://localhost:3000
+    start: pnpm dev
+    seedCmd: pnpm db:seed
+    accounts:
+      source: seed
+      seedFile: ../seeds/acme-web.seed.ts # dev logins live in committed code
+    gotchas:
+      - run `docker compose up db` first or auth throws a 500
+      - port is set by PORT in .env, defaults to 3000
+  staging:
+    url: https://staging.acme.dev
+    accounts:
+      source: vault
+      vaultItem: Acme — staging # a 1Password item NAME. Never the password.
+  prod:
+    url: https://acme.com
+    accounts:
+      source: vault
+      vaultItem: Acme — production
+
+# Third-party services this app depends on. Names & dashboards, never keys.
+integrations:
+  - name: Stripe
+    url: https://dashboard.stripe.com
+    vaultItem: Acme — Stripe
+    note: test-mode keys in .env.example; live keys in 1Password
+  - name: Sentry
+    url: https://acme.sentry.io
+    vaultItem: Acme — Sentry
+  - name: Resend (email)
+    vaultItem: Acme — Resend

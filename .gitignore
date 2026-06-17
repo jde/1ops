@@ -1,0 +1,20 @@
+# --- deps / build ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# --- env / secrets (defense in depth; playbooks should never hold these anyway) ---
+.env
+.env.*
+!.env.example
+
+# --- your REAL playbooks never live in this repo ---
+# They live in each app's own repo at /.ops/playbook.yaml and are symlinked into
+# ~/playbooks (or wherever ONEOPS_PLAYBOOKS_DIR points). The only playbooks this
+# public repo ships are the fake ones under examples/.
+/playbooks/
+*.local.yaml
+
+.DS_Store

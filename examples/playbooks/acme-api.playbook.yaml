@@ -1,0 +1,23 @@
+# Example playbook — fake, safe to publish.
+app: acme-api
+description: REST + webhooks backend
+repo: https://github.com/acme/api
+envs:
+  dev:
+    url: http://localhost:8787
+    start: pnpm dev
+    accounts:
+      source: inline-nonsecret
+      note: no auth in dev — hit it directly. Admin token printed on boot.
+    gotchas:
+      - needs the acme-web db running; share the same docker compose
+  staging:
+    url: https://api.staging.acme.dev
+    accounts:
+      source: vault
+      vaultItem: Acme API — staging
+  prod:
+    url: https://api.acme.com
+    accounts:
+      source: vault
+      vaultItem: Acme API — production

@@ -1,0 +1,26 @@
+{
+  "name": "1ops",
+  "version": "0.1.0",
+  "private": false,
+  "license": "MIT",
+  "description": "1Password's chaotic dev cousin. One place for every app's dev/staging/prod URLs and where the creds live — without ever storing a secret.",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3"
+  }
+}

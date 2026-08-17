@@ -1,0 +1,20 @@
+# 1op playbook — 1ops (successor experiment to 1op). Pointers, never secrets.
+app: 1ops
+type: Experiments
+weight: 2
+description: >
+  A second iteration of the 1op idea (macOS installer for the launcher +
+  reworked app shell). STATUS 2026-08-17: 18 uncommitted files, 1 old unpushed
+  branch, and a FOLD-OR-ARCHIVE decision pending (STASIS floor-sweep batch 2):
+  either its improvements fold back into jde/1op or it archives with its
+  concepts mined. Do not build here until that decision is made.
+repoRoot: /Users/daviderwin/dev/github.com/jde/1ops
+packageManager: npm
+
+envs:
+  dev:
+    url: http://localhost:3000
+    start: npm run dev
+    accounts:
+      source: inline-nonsecret
+      note: no auth

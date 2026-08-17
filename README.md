@@ -1,5 +1,16 @@
 # 🔑 1ops
 
+## State of the project
+
+- Form: document capture
+- Arc: (none)
+- Next session: DAVE DECISION: fold this iteration's improvements (HealthLight, SimDeck, deploy-status, repo-activity) back into jde/1op, or archive with concepts mined
+
+Second iteration of the 1op idea — a richer dashboard (health lights, simulator deck, deploy status, repo activity) plus a macOS installer. All work now committed on branch add-1ops-installer.
+
+*Recorded 2026-08-17 (STASIS floor sweep). Access facts: `.ops/playbook.yaml`.*
+
+
 **1Password's chaotic dev cousin.**
 
 You have a dozen apps. Each has a dev URL, a staging URL, a prod URL, a package

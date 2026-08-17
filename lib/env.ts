@@ -1,4 +1,9 @@
-import type { Playbook } from "./schema";
+import type { Dependency } from "./schema";
+
+/** Anything that carries declared dependencies — a Repo (deps are repo-level/shared). */
+interface HasDependencies {
+  dependencies?: Dependency[];
+}
 
 export interface EnvKey {
   key: string;
@@ -7,7 +12,7 @@ export interface EnvKey {
 }
 
 /** The env vars 1ops can generate from declared deps, with {port} substituted. */
-export function managedEnv(pb: Playbook): EnvKey[] {
+export function managedEnv(pb: HasDependencies): EnvKey[] {
   const out: EnvKey[] = [];
   for (const d of pb.dependencies ?? []) {
     for (const [k, v] of Object.entries(d.env ?? {})) {
@@ -41,7 +46,7 @@ export interface EnvPlan {
  * Compute what `1ops env` would do without touching anything. Merge-safe:
  * a key already set in .env is KEPT, never overwritten.
  */
-export function planEnv(pb: Playbook, existingEnv: string, exampleEnv: string): EnvPlan {
+export function planEnv(pb: HasDependencies, existingEnv: string, exampleEnv: string): EnvPlan {
   const existing = parseEnv(existingEnv);
   const example = parseEnv(exampleEnv);
   const managed = managedEnv(pb).map((e) => ({

@@ -15,7 +15,7 @@ import path from "node:path";
 import readline from "node:readline";
 import { loadPlaybooks } from "../lib/playbooks";
 import { planEnv, renderEnvBlock } from "../lib/env";
-import type { Playbook } from "../lib/schema";
+import type { Project, Repo } from "../lib/schema";
 import {
   appendLogSync,
   detectLevel,
@@ -50,14 +50,25 @@ function die(msg: string): never {
   process.exit(1);
 }
 
-async function findApp(name: string): Promise<Playbook> {
-  const { playbooks } = await loadPlaybooks();
-  const pb = playbooks.find((p) => p.app === name);
-  if (!pb) {
-    const names = playbooks.map((p) => p.app).join(", ") || "(none found)";
-    die(`unknown app "${name}". Known: ${names}`);
+interface Target {
+  repo: Repo;
+  project: Project;
+}
+
+/** Resolve "repo/project", a bare project name, or a repo name (→ its first project). */
+async function findApp(name: string): Promise<Target> {
+  const { repos } = await loadPlaybooks();
+  for (const repo of repos) {
+    for (const project of repo.projects) {
+      if (project.name === name || `${repo.repo}/${project.name}` === name) return { repo, project };
+    }
   }
-  return pb;
+  const repo = repos.find((r) => r.repo === name);
+  if (repo && repo.projects[0]) return { repo, project: repo.projects[0] };
+  const names =
+    repos.flatMap((r) => r.projects.map((p) => (r.projects.length > 1 ? `${r.repo}/${p.name}` : p.name))).join(", ") ||
+    "(none found)";
+  die(`unknown target "${name}". Known: ${names}`);
 }
 
 function envName(flags: Flags): "dev" | "staging" | "prod" {
@@ -67,9 +78,9 @@ function envName(flags: Flags): "dev" | "staging" | "prod" {
 }
 
 /** Best-effort repo root for running commands: strip a trailing /.ops. */
-function repoRoot(pb: Playbook): string {
-  if (pb.repoRoot) return pb.repoRoot;
-  const dir = pb._file ? path.dirname(pb._file) : process.cwd();
+function repoRoot(repo: Repo): string {
+  if (repo.repoRoot) return repo.repoRoot;
+  const dir = repo._file ? path.dirname(repo._file) : process.cwd();
   return path.basename(dir) === ".ops" ? path.dirname(dir) : dir;
 }
 
@@ -83,18 +94,23 @@ const HELP = `1ops — your dev keyring + agent collaboration kit
 `;
 
 async function cmdList() {
-  const { playbooks, isExample, dir } = await loadPlaybooks();
-  console.log(`${playbooks.length} app(s) from ${dir}${isExample ? " (example data)" : ""}:`);
-  for (const p of playbooks) {
-    const envs = Object.keys(p.envs).join(", ");
-    console.log(`  ${p.app.padEnd(20)} ${p.description ?? ""}  [${envs}]`);
+  const { repos, isExample, dir } = await loadPlaybooks();
+  const count = repos.reduce((n, r) => n + r.projects.length, 0);
+  console.log(`${count} product(s) across ${repos.length} repo(s) from ${dir}${isExample ? " (example data)" : ""}:`);
+  for (const r of repos) {
+    console.log(`  📦 ${r.repo}`);
+    for (const p of r.projects) {
+      const envs = Object.keys(p.envs).join(", ");
+      const label = r.projects.length > 1 ? `${r.repo}/${p.name}` : p.name;
+      console.log(`     ${label.padEnd(24)} ${p.type ?? ""}  [${envs}]  ${p.description ?? ""}`);
+    }
   }
 }
 
 async function cmdCreds(name: string, flags: Flags) {
-  const pb = await findApp(name);
+  const { project } = await findApp(name);
   const env = envName(flags);
-  const acct = pb.envs[env]?.accounts;
+  const acct = project.envs[env]?.accounts;
   const json = !!flags.json;
   const reveal = !!flags.reveal || json;
 
@@ -128,14 +144,14 @@ function out(o: unknown) {
 }
 
 async function cmdEnv(name: string, flags: Flags) {
-  const pb = await findApp(name);
-  const root = repoRoot(pb);
+  const { repo } = await findApp(name);
+  const root = repoRoot(repo);
   const envPath = path.join(root, ".env");
   const examplePath = path.join(root, ".env.example");
   const existing = existsSync(envPath) ? readFileSync(envPath, "utf8") : "";
   const example = existsSync(examplePath) ? readFileSync(examplePath, "utf8") : "";
 
-  const plan = planEnv(pb, existing, example);
+  const plan = planEnv(repo, existing, example);
   if (flags.json) return out(plan);
 
   console.log(`.env plan for ${name}  (${envPath})`);
@@ -161,11 +177,11 @@ async function cmdEnv(name: string, flags: Flags) {
 }
 
 async function cmdRun(name: string, flags: Flags) {
-  const pb = await findApp(name);
+  const { repo, project } = await findApp(name);
   const env = envName(flags);
-  const start = pb.envs[env]?.start;
+  const start = project.envs[env]?.start;
   if (!start) die(`${name}/${env} has no "start" command in its playbook`);
-  const cwd = repoRoot(pb);
+  const cwd = repoRoot(repo);
 
   console.error(`1ops: running "${start}" in ${cwd}  (logs → ${logPath(name)})`);
   const child = spawn(start, { cwd, shell: true, stdio: ["inherit", "pipe", "pipe"] });

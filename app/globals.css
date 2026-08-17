@@ -112,6 +112,100 @@ header.top .tag {
   padding: 1px 6px;
 }
 
+.type {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dev);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* 1ops-contract conformance chip */
+.contract {
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 7px;
+  cursor: help;
+}
+.contract-ok {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.contract-unmet {
+  color: var(--staging);
+  border-color: var(--staging);
+}
+.ql-unmet {
+  color: var(--staging);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* Live health light — sits at the right edge of the card head. */
+.head-health {
+  margin-left: auto;
+}
+.health {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: help;
+}
+.health-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+  box-shadow: 0 0 0 0 currentColor;
+}
+.health-up {
+  color: var(--accent);
+}
+.health-up .health-dot {
+  background: var(--accent);
+  box-shadow: 0 0 7px 0 var(--accent);
+}
+.health-degraded {
+  color: var(--staging);
+}
+.health-degraded .health-dot {
+  background: var(--staging);
+  box-shadow: 0 0 7px 0 var(--staging);
+}
+.health-down {
+  color: var(--prod);
+}
+.health-down .health-dot {
+  background: var(--prod);
+  box-shadow: 0 0 7px 0 var(--prod);
+}
+.health-checking .health-dot,
+.health-unknown .health-dot {
+  background: var(--muted);
+  animation: health-pulse 1.2s ease-in-out infinite;
+}
+@keyframes health-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.health-checks {
+  color: var(--muted);
+  font-size: 11px;
+  opacity: 0.85;
+}
+
 .commands {
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
@@ -262,6 +356,49 @@ table.users td.role {
   color: var(--muted);
   text-align: right;
 }
+table.users td.ql {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: 8px;
+}
+.ql-link {
+  display: inline-block;
+  font-size: 11px;
+  padding: 1px 8px;
+  border: 1px solid var(--dev);
+  border-radius: 6px;
+  color: var(--dev);
+  margin-left: 6px;
+}
+.ql-link:hover {
+  text-decoration: none;
+  background: var(--panel-2);
+}
+.open-sim {
+  font: inherit;
+  font-size: 11px;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text);
+  cursor: pointer;
+  margin-left: 6px;
+}
+.open-sim:hover {
+  border-color: var(--accent);
+}
+.open-sim-ok {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.open-sim-err {
+  border-color: var(--prod);
+  color: var(--prod);
+}
+.open-sim-opening {
+  opacity: 0.7;
+}
 
 details.seed {
   margin-top: 6px;
@@ -295,4 +432,372 @@ footer.foot {
   color: var(--muted);
   font-size: 12px;
   text-align: center;
+}
+
+/* ── nav tabs ── */
+.nav {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+.nav-tab {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 14px;
+}
+.nav-tab:hover {
+  text-decoration: none;
+  color: var(--text);
+}
+.nav-tab.on {
+  color: var(--text);
+  border-color: var(--dev);
+  background: var(--panel-2);
+}
+
+/* ── repo (top of hierarchy) ── */
+.repo-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  margin: 18px 0;
+  overflow: hidden;
+  scroll-margin-top: 16px;
+}
+.repo-head {
+  padding: 14px 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
+}
+.repo-head h2 {
+  margin: 0;
+  font-size: 19px;
+}
+.repo-glyph {
+  font-size: 16px;
+}
+.repo-head .desc {
+  color: var(--muted);
+  font-size: 13px;
+}
+.cross-link {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+}
+.cross-link:hover {
+  text-decoration: none;
+  color: var(--text);
+  border-color: var(--dev);
+}
+
+/* ── projects within a repo ── */
+.projects {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.project-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.project-head {
+  padding: 10px 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.project-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.project-head .desc {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.commands-title,
+.deps-title {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 8px;
+}
+.commands {
+  align-items: baseline;
+}
+
+/* mobile device deck */
+.simdeck {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.simdeck-title {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.sim-up {
+  color: var(--accent);
+}
+.sim-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.sim {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+  font-size: 12px;
+}
+.sim-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.sim-on {
+  border-color: var(--accent);
+}
+.sim-on .sim-dot {
+  background: var(--accent);
+  box-shadow: 0 0 6px 0 var(--accent);
+}
+.sim-off {
+  opacity: 0.7;
+}
+.sim-name {
+  color: var(--text);
+}
+.sim-dim {
+  color: var(--muted);
+  font-size: 11px;
+}
+.sim-phys {
+  color: var(--staging);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.env-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.muted {
+  color: var(--muted);
+}
+.prod-nologin {
+  color: var(--prod);
+  font-size: 12px;
+}
+
+/* per-env integrations + QR on the ops card */
+.env-ints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+.qr {
+  margin-top: 10px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.qr img {
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px;
+}
+.qr-cap {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── flow page: activity + deployments ── */
+.activity {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.activity.none {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.activity-title,
+.deploys-title {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.flow-stat {
+  font-size: 13px;
+  color: var(--text);
+}
+.flow-stat b {
+  font-size: 15px;
+}
+.flow-arrow {
+  color: var(--muted);
+}
+.flow-warn {
+  color: var(--staging);
+  font-size: 12px;
+  border: 1px solid var(--staging);
+  border-radius: 7px;
+  padding: 1px 7px;
+}
+.flow-stale {
+  color: var(--prod);
+  font-size: 12px;
+  border: 1px solid var(--prod);
+  border-radius: 7px;
+  padding: 1px 7px;
+}
+.flow-wt {
+  color: var(--dev);
+  font-size: 12px;
+  border: 1px solid var(--dev);
+  border-radius: 7px;
+  padding: 1px 7px;
+}
+.wt-tag {
+  color: var(--dev);
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 6px;
+}
+.branch-list,
+.stale-list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.branch-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+}
+.branch-list li.stale code {
+  color: var(--prod);
+}
+.deploys {
+  padding: 12px 16px;
+}
+.proj-deploys {
+  margin-top: 8px;
+}
+.proj-deploys-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.proj-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+.deploy-envs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.deploy-cell {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--panel-2);
+}
+.deploy-cell .name {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+.deploy-cell.dev .name {
+  color: var(--dev);
+}
+.deploy-cell.staging .name {
+  color: var(--staging);
+}
+.deploy-cell.prod .name {
+  color: var(--prod);
+}
+.deploy-status {
+  display: inline-block;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.deploy-status.ready {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.deploy-status.building,
+.deploy-status.queued {
+  color: var(--staging);
+  border-color: var(--staging);
+}
+.deploy-status.error {
+  color: var(--prod);
+  border-color: var(--prod);
+}
+.deploy-live code {
+  margin: 0 4px;
+}
+
+/* the at-a-glance deploy banners */
+.deploy-alert {
+  border-color: var(--prod);
+  color: var(--prod);
+  font-size: 14px;
+}
+.deploy-ok {
+  border-color: var(--accent);
+  color: var(--accent);
 }
